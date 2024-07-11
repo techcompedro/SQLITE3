@@ -2,7 +2,7 @@ import sqlite3 as lite
 from pathlib import Path
 
 root_dir = Path(__file__).parent
-db = 'db.sqlite3'
+db = 'banco_de_dados.sqlite3'
 dbf = root_dir / db
 
 connection = lite.connect(dbf)
@@ -16,28 +16,45 @@ cursor.execute(
     'NOME TEXT, '
     'preco REAL, '
     'custo REAL, '
-    'estoque INTEGER'
+    'estoque INTEGER,'
     'lucro REAL'
     ')'
 )
 connection.commit()
 
-def add_produtos(nome: str, preco, custo, estoque, money):
+def add_produtos(nome: str, preco: float, custo: float, estoque: int, lucro: float):
     cursor.execute(
-        f'INSERT INTO produto (id, nome, preco, custo, estoque, lucro)'
-        f'VALUES (NULL, {nome}, {preco}, {custo}, {estoque}, lucro)'
+        'INSERT INTO produto (NOME, preco, custo, estoque, lucro) VALUES (?, ?, ?, ?, ?)',
+        (nome, preco, custo, estoque, lucro)
     )
     connection.commit()
 
-produto_nome = str(input('digite o nome do produto:'))
-produto_preco = float(input('digite o preço do produto:'))
-produto_custo = float(input('digite o preço de custo do produto:'))
-calculo_do_lucro = produto_preco-produto_custo
-pro01 = 100*produto_preco
-pro02 = pro01/100
-print(f'esse é de {pro02}% que é igual a R${calculo_do_lucro}')
-produto_estoque = float(input('digite quantos produtos comprou para fazer o estoque:'))
-add_produtos(produto_nome, produto_preco, produto_custo, produto_estoque, pro02)
+produto_nome = input('Digite o nome do produto:')
+produto_preco = float(input('Digite o preço do produto:'))
+produto_custo = float(input('Digite o preço de custo do produto:'))
+calculo_do_lucro = produto_preco - produto_custo
+pro01 = calculo_do_lucro / produto_custo
+pro02 = pro01 * 100
+print(f'Esse é de {pro02:.2f}% que é igual a R${calculo_do_lucro:.2f}')
+produto_estoque = int(input('Digite quantos produtos comprou para fazer o estoque:'))
+
+add_produtos(produto_nome, produto_preco, produto_custo, produto_estoque, calculo_do_lucro)
+
+
+
+cursor.execute(f"SELECT * FROM {TABELA}")
+
+
+dados = cursor.fetchall()
+
+
+
+for linha in dados:
+    print(linha)
+
+
+
+
 
 cursor.close()
 connection.close()
