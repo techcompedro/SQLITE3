@@ -1,5 +1,6 @@
 import sqlite3 as lite
 from pathlib import Path
+import pandas as pd 
 
 root_dir = Path(__file__).parent
 db = 'banco_de_dados.sqlite3'
@@ -28,29 +29,31 @@ def add_produtos(nome: str, preco: float, custo: float, estoque: int, lucro: flo
         (nome, preco, custo, estoque, lucro)
     )
     connection.commit()
+print('=====ESCOLHA=====\n'
+      '1- adicionar produto\n'
+      '2- lista de produto\n'
+      '===================')
+opcao = int(input('digite a sua escolha:'))
+if opcao == 1:
+    produto_nome = input('Digite o nome do produto:')
+    produto_preco = float(input('Digite o preço do produto:'))
+    produto_custo = float(input('Digite o preço de custo do produto:'))
+    calculo_do_lucro = produto_preco - produto_custo
+    pro01 = calculo_do_lucro / produto_custo
+    pro02 = pro01 * 100
+    print(f'Esse é de {pro02:.2f}% que é igual a R${calculo_do_lucro:.2f}')
+    produto_estoque = int(input('Digite quantos produtos comprou para fazer o estoque:'))
 
-produto_nome = input('Digite o nome do produto:')
-produto_preco = float(input('Digite o preço do produto:'))
-produto_custo = float(input('Digite o preço de custo do produto:'))
-calculo_do_lucro = produto_preco - produto_custo
-pro01 = calculo_do_lucro / produto_custo
-pro02 = pro01 * 100
-print(f'Esse é de {pro02:.2f}% que é igual a R${calculo_do_lucro:.2f}')
-produto_estoque = int(input('Digite quantos produtos comprou para fazer o estoque:'))
-
-add_produtos(produto_nome, produto_preco, produto_custo, produto_estoque, calculo_do_lucro)
-
-
-
-cursor.execute(f"SELECT * FROM {TABELA}")
-
-
-dados = cursor.fetchall()
+    add_produtos(produto_nome, produto_preco, produto_custo, produto_estoque, calculo_do_lucro)
 
 
 
-for linha in dados:
-    print(linha)
+elif opcao == 2:
+    dados = cursor.fetchall()
+    print('lista de produtos')
+    df = pd.read_sql_query(f"SELECT * FROM {TABELA}", connection)
+    print(df.to_string (index=False))
+  
 
 
 
